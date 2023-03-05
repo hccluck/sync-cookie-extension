@@ -1,0 +1,18 @@
+{
+  "name": "sync-cookie-extension",
+  "version": "1.0.0",
+  "description": "`解决开发环境跨域cookie自动携带问题`",
+  "main": "src/index.js",
+  "scripts": {
+    "format": "prettier --write ./** --loglevel warn"
+  },
+  "keywords": [
+    "CORS",
+    "cookie"
+  ],
+  "author": "hccluck",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^2.8.4"
+  }
+}

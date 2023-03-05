@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowJs": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

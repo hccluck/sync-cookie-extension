@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "COOKIE跨域同步",
+  "version": "1.2.0",
+  "description": "开发环境同步cookie至localhost，便于本地跨域请求服务携带cookie，解决开发环境CORS问题",
+  "icons": {
+    "16": "imgs/icons/cookie16.png",
+    "32": "imgs/icons/cookie32.png",
+    "48": "imgs/icons/cookie48.png",
+    "128": "imgs/icons/cookie128.png"
+  },
+  "action": {
+    "default_icon": "imgs/icons/cookie48.png",
+    "default_title": "开发环境cookie跨域自动同步，解决开发环境cookie携带问题",
+    "default_popup": "src/index.html"
+  },
+  "permissions": ["tabs", "storage", "cookies"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  }
+}

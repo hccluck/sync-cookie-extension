@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COOKIE跨域同步</title>
+    <link rel="shortcut icon" href="./imgs/icons/cookie32.png" type="image/png" />
+    <link rel="stylesheet" href="./styles/index.css" />
+    <script src="./libs/petite-vue-csp.iife.js"></script>
+  </head>
+
+  <body @vue:mounted="mounted()">
+    <div id="app">
+      <div class="actions">
+        <div>
+          <button @click="openDrawer()">新增</button>
+          <button @click="searchByDomain()">按域名新增</button>
+          <button @click="syncCookie()">同步COOKIE</button>
+          <button @click="clearCookie()">清空COOKIE</button>
+        </div>
+        <div>
+          <input ref="upload" type="file" accept=".json" @change="uploadHandler()" class="hide" hidden />
+          <button @click="upload()">导入</button>
+          <button @click="download()">导出</button>
+        </div>
+      </div>
+
+      <table cellpadding="0" cellspacing="0">
+        <colgroup>
+          <col class="column1" />
+          <col class="column2" />
+          <col class="column3" />
+          <col class="column4" />
+          <col class="column5" />
+          <col class="column6" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>COOKIE</th>
+            <th>备注</th>
+            <th>是否同步</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody v-if="dataSource.length">
+          <tr v-for="(item, index) in dataSource">
+            <td title="点击按域名新增" @click="searchByDomain(item.from)">{{ item.from }}</td>
+            <td title="点击按域名新增" @click="searchByDomain(item.to)">{{ item.to }}</td>
+            <td>{{ item.cookieName }}</td>
+            <td>{{ item.remark }}</td>
+            <td>
+              <div class="switch" title="开启或关闭同步">
+                <input :id="'checkbox-' + index" type="checkbox" :checked="item.open" @change="changeStatus(index)" />
+                <label :for="'checkbox-' + index"></label>
+              </div>
+            </td>
+            <td>
+              <i class="iconfont icon-delete" @click="remove(index)" title="删除"></i>
+            </td>
+          </tr>
+        </tbody>
+        <tbody v-else>
+          <tr>
+            <td colspan="6">暂无数据</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="drawer" v-if="drawer">
+      <div class="mask" @click.capture="close()"></div>
+      <div class="form">
+        <div class="title-box">
+          <div class="title">新增</div>
+          <i class="iconfont icon-close2" @click="close()"></i>
+        </div>
+        <div class="row">
+          <label for="from">From：</label>
+          <input v-model="instance.from" type="text" id="from" placeholder="请输入" />
+        </div>
+        <div class="row">
+          <label for="to">To：</label>
+          <input v-model="instance.to" type="text" id="to" placeholder="请输入" />
+        </div>
+        <div class="row">
+          <label for="cookieName">CookieName：</label>
+          <input v-model="instance.cookieName" type="text" id="cookieName" placeholder="请输入" />
+        </div>
+        <div class="row">
+          <label for="remark">备注：</label>
+          <input v-model="instance.remark" type="text" id="remark" placeholder="请输入" />
+        </div>
+        <div class="ac">
+          <button @click="add()">提交</button>
+          <button @click="close()">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer" v-if="domainDrawer">
+      <div class="mask" @click.capture="domainDrawer = false"></div>
+      <div class="form">
+        <div class="title-box title-domain">
+          <div class="title">按域名检索新增</div>
+          <i class="iconfont icon-close2" @click="domainDrawer = false"></i>
+        </div>
+
+        <div class="search">
+          <input v-model="from" type="text" placeholder="按域名搜索" @keydown.enter="getAllCookie()" />
+          <i class="iconfont icon-sousuoxiao" @click="getAllCookie()" title="搜索"></i>
+        </div>
+
+        <div class="domain-list">
+          <table cellpadding="0" cellspacing="0">
+            <colgroup>
+              <col class="column7" />
+              <col class="column8" />
+              <col class="column9" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody v-if="cookieList.length">
+              <tr v-for="(item, index) in cookieList">
+                <td>
+                  <div class="column7 ellipsis" :title="item.name">{{ item.name }}</div>
+                </td>
+                <td>
+                  <div class="column8 ellipsis" :title="item.value">{{ item.value }}</div>
+                </td>
+                <td>
+                  <i class="iconfont icon-jia add" @click="toAdd(index)" title="新增"></i>
+                </td>
+              </tr>
+            </tbody>
+            <tbody v-else>
+              <tr>
+                <td colspan="6">暂无数据</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="./index.js" type="module"></script>
+  </body>
+</html>
