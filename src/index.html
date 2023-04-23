@@ -19,7 +19,7 @@
           <button @click="clearCookie()">清空COOKIE</button>
         </div>
         <div>
-          <input ref="upload" type="file" accept=".json" @change="uploadHandler()" class="hide" hidden />
+          <input ref="upload" type="file" accept=".json" @change="uploadHandler" class="hide" hidden />
           <button @click="upload()">导入</button>
           <button @click="download()">导出</button>
         </div>
