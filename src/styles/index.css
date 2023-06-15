@@ -294,6 +294,9 @@ input {
   border: 1px solid #ebeef5;
   background-color: #edf2fc;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.25);
+  opacity: 0.3;
+  transform: translateY(-20px);
+  transition: all ease-out 200ms;
 }
 
 .toast-wrap.toast-success {

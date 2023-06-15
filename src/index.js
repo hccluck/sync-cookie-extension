@@ -13,13 +13,27 @@ class Toast {
     toastEl.textContent = message;
 
     document.body.appendChild(toastEl);
-
     this.count += 1;
+    // 设置入场动画状态
+    setTimeout(() => {
+      toastEl.style.opacity = 1
+      toastEl.style.transform = 'translateY(0)'
+    })
 
+    // 设置出场动画状态
+    setTimeout(() => {
+      toastEl.style.opacity = 0.5
+      toastEl.style.transform = 'translateY(-20px)'
+    }, duration)
     setTimeout(() => {
       document.body.removeChild(toastEl);
       this.count -= 1;
-    }, duration);
+
+      const list = document.querySelectorAll('.toast-wrap')
+      list.forEach((toast, index) => {
+        toast.style.top = `${50 * (index + 1)}px`;
+      })
+    }, duration + 200);
   }
 
   static success(config) {

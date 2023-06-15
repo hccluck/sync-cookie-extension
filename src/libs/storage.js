@@ -35,6 +35,8 @@ function setCookie(cookie, config) {
     url: addProtocol(config.to || 'url'),
     domain: removeProtocol(config.to || 'url'),
     path: '/',
+    // secure: true,
+    // httpOnly: true,
   });
 }
 
