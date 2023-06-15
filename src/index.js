@@ -4,7 +4,7 @@ import { updateStorage, getStorage, updateCookie, removeCookie, getAllCookie, LI
 class Toast {
   static count = 0;
 
-  static open(message, theme = 'info', duration = 2000) {
+  static open(message, theme = 'info', duration = 3000, animation = 200) {
     const toastEl = document.createElement('div');
 
     toastEl.className = `toast-wrap toast-${theme}`;
@@ -14,26 +14,30 @@ class Toast {
 
     document.body.appendChild(toastEl);
     this.count += 1;
+
     // 设置入场动画状态
     setTimeout(() => {
       toastEl.style.opacity = 1
-      toastEl.style.transform = 'translateY(0)'
+      toastEl.style.transform = 'translate(-50%, 0)'
     })
 
-    // 设置出场动画状态
     setTimeout(() => {
+      // 设置出场动画状态
       toastEl.style.opacity = 0.5
-      toastEl.style.transform = 'translateY(-20px)'
-    }, duration)
-    setTimeout(() => {
-      document.body.removeChild(toastEl);
-      this.count -= 1;
+      toastEl.style.transform = 'translate(-50%, -20px)'
 
-      const list = document.querySelectorAll('.toast-wrap')
-      list.forEach((toast, index) => {
-        toast.style.top = `${50 * (index + 1)}px`;
-      })
-    }, duration + 200);
+      setTimeout(() => {
+        // 动画结束后
+        document.body.removeChild(toastEl);
+        this.count -= 1;
+
+        const list = document.querySelectorAll('.toast-wrap')
+        list.forEach((toast, index) => {
+          // 重新设置位置
+          toast.style.top = `${50 * (index + 1)}px`;
+        })
+      }, animation)
+    }, duration)
   }
 
   static success(config) {
@@ -42,7 +46,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'success');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'success', config.duration);
+      this.open(config.content, 'success', config.duration, config.animation);
     }
   }
 
@@ -52,7 +56,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'warning');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'warning', config.duration);
+      this.open(config.content, 'warning', config.duration, config.animation);
     }
   }
 
@@ -62,7 +66,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'error');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'error', config.duration);
+      this.open(config.content, 'error', config.duration, config.animation);
     }
   }
 
@@ -72,7 +76,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'info');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'info', config.duration);
+      this.open(config.content, 'info', config.duration, config.animation);
     }
   }
 }
@@ -103,23 +107,32 @@ const app = PetiteVue.createApp({
 
   syncCookie() {
     console.log(this.dataSource);
+    const list = []
     this.dataSource.forEach((item) => {
       if (item.open) {
-        updateCookie({
+        list.push({
           from: item.from,
           to: item.to,
           cookieName: item.cookieName,
-        });
-
-        Toast.success('Cookie同步成功！');
+        })
       }
     });
+
+    if (list.length) {
+      Promise.all(list.map(i => updateCookie(i))).then(() => {
+        Toast.success('Cookie同步成功！');
+      }).catch(() => {
+        Toast.error('Cookie同步异常！');
+      })
+    } else {
+      this.clearCookie()
+    }
   },
 
   clearCookie() {
     try {
       this.dataSource.forEach(removeCookie);
-      Toast.success('已清空，请刷新页面');
+      Toast.warning('已清空，请刷新页面');
     } catch (error) {
       Toast.error('清空Cookie异常');
     }
@@ -145,14 +158,14 @@ const app = PetiteVue.createApp({
   },
 
   async getAllCookie() {
-    if (!this.from) return Toast.warning('请输入域名');
+    if (!this.from) return Toast.info('请输入域名');
     this.cookieList = await getAllCookie(this.from);
   },
 
   add() {
-    if (!this.instance.from) return Toast.warning('请输入From');
-    if (!this.instance.to) return Toast.warning('请输入To');
-    if (!this.instance.cookieName) return Toast.warning('请输入Cookie名');
+    if (!this.instance.from) return Toast.info('请输入From');
+    if (!this.instance.to) return Toast.info('请输入To');
+    if (!this.instance.cookieName) return Toast.info('请输入Cookie名');
 
     const item = cloneDeep(this.instance);
     for (let row of this.dataSource) {

@@ -287,7 +287,7 @@ input {
   position: fixed;
   top: 50px;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -20px);
   padding: 8px 12px;
   border-radius: 4px;
   color: #909399;
@@ -295,7 +295,6 @@ input {
   background-color: #edf2fc;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.25);
   opacity: 0.3;
-  transform: translateY(-20px);
   transition: all ease-out 200ms;
 }
 
