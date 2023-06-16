@@ -295,7 +295,17 @@ input {
   background-color: #edf2fc;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.25);
   opacity: 0.3;
-  transition: all ease-out 200ms;
+  transition: all 200ms ease-out 10ms;
+}
+
+.toast-wrap.enter {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast-wrap.leave {
+  opacity: 0.3;
+  transform: translate(-50%, -20px);
 }
 
 .toast-wrap.toast-success {

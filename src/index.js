@@ -10,43 +10,50 @@ class Toast {
     toastEl.className = `toast-wrap toast-${theme}`;
     toastEl.style.top = `${50 * (this.count + 1)}px`;
 
+    this.count += 1;
     toastEl.textContent = message;
 
     document.body.appendChild(toastEl);
-    this.count += 1;
 
     // 设置入场动画状态
     setTimeout(() => {
-      toastEl.style.opacity = 1
-      toastEl.style.transform = 'translate(-50%, 0)'
-    })
+      toastEl.classList.toggle('enter')
+    }, 20);
 
-    setTimeout(() => {
-      // 设置出场动画状态
-      toastEl.style.opacity = 0.5
-      toastEl.style.transform = 'translate(-50%, -20px)'
-
+    return new Promise(resolve => {
       setTimeout(() => {
-        // 动画结束后
-        document.body.removeChild(toastEl);
-        this.count -= 1;
+        // 设置出场动画状态
+        toastEl.classList.toggle('enter')
 
-        const list = document.querySelectorAll('.toast-wrap')
-        list.forEach((toast, index) => {
-          // 重新设置位置
-          toast.style.top = `${50 * (index + 1)}px`;
-        })
-      }, animation)
-    }, duration)
+        setTimeout(() => {
+          // 动画结束后
+          document.body.removeChild(toastEl);
+          this.count -= 1;
+
+          const list = document.querySelectorAll('.toast-wrap')
+          list.forEach((toast, index) => {
+            // 重新设置位置
+            toast.style.top = `${50 * (index + 1)}px`;
+          })
+
+          resolve()
+        }, animation)
+      }, duration)
+    })
   }
 
+  /**
+   * 成功提示
+   * @param {string|object} config 提示内容或者Toast.config
+   * @returns {Promise} Promise
+   */
   static success(config) {
     if (config == null) return;
 
     if (typeof config === 'string') return this.open(config, 'success');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'success', config.duration, config.animation);
+      return this.open(config.content, 'success', config.duration, config.animation);
     }
   }
 
@@ -56,7 +63,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'warning');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'warning', config.duration, config.animation);
+      return this.open(config.content, 'warning', config.duration, config.animation);
     }
   }
 
@@ -66,7 +73,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'error');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'error', config.duration, config.animation);
+      return this.open(config.content, 'error', config.duration, config.animation);
     }
   }
 
@@ -76,7 +83,7 @@ class Toast {
     if (typeof config === 'string') return this.open(config, 'info');
 
     if (Object.prototype.toString.call(config) === '[object Object]') {
-      this.open(config.content, 'info', config.duration, config.animation);
+      return this.open(config.content, 'info', config.duration, config.animation);
     }
   }
 }
