@@ -6,8 +6,6 @@
 
 ![扩展程序新增](./imgs/add.png)
 
-![扩展程序按域名新增](./imgs/addByDomain.png)
-
 ---
 
 ### 原理
