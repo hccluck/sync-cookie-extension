@@ -9,25 +9,23 @@ class Toast {
 
     toastEl.className = `toast-wrap toast-${theme}`;
     toastEl.style.top = `${50 * (this.count + 1)}px`;
-
+    toastEl.style['transition-duration'] = `${animation}ms`;
+    
     this.count += 1;
     toastEl.textContent = message;
 
     document.body.appendChild(toastEl);
 
+    toastEl.getBoundingClientRect(); // 触发重新布局
     // 设置入场动画状态
-    setTimeout(() => {
-      toastEl.classList.toggle('enter')
-    }, 20);
+    toastEl.classList.toggle('enter');
 
     return new Promise(resolve => {
       setTimeout(() => {
-        // 设置出场动画状态
-        toastEl.classList.toggle('enter')
+        toastEl.addEventListener('transitionend', () => {
+          // alert('动画结束后')
+          toastEl.parentNode.removeChild(toastEl);
 
-        setTimeout(() => {
-          // 动画结束后
-          document.body.removeChild(toastEl);
           this.count -= 1;
 
           const list = document.querySelectorAll('.toast-wrap')
@@ -37,7 +35,10 @@ class Toast {
           })
 
           resolve()
-        }, animation)
+        })
+
+        // 设置出场动画状态
+        toastEl.classList.toggle('enter')
       }, duration)
     })
   }
@@ -97,6 +98,8 @@ const app = PetiteVue.createApp({
   from: '',
   cookieList: [],
 
+  ip: '',
+
   async mounted() {
     const storage = await getStorage();
     const domainList = !isEmpty(storage) ? Object.values(storage[LIST_KEY]) : [];
@@ -110,6 +113,10 @@ const app = PetiteVue.createApp({
       updateStorage(this.dataSource);
       this.syncCookie();
     }
+
+    fetch('https://myip.ipip.net')
+      .then(res => res.text())
+      .then(text => this.ip = text);
   },
 
   syncCookie() {
@@ -289,6 +296,12 @@ const app = PetiteVue.createApp({
       URL.revokeObjectURL(url);
       document.body.removeChild(linkEl);
     }, 300);
+  },
+
+  copyIP() {
+    const ip = /((\d{1,3}.){3}\d{1,3})/.exec(this.ip)[1];
+    navigator.clipboard.writeText(ip);
+    Toast.success('复制成功')
   },
 });
 

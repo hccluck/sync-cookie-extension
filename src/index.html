@@ -67,6 +67,8 @@
           </tr>
         </tbody>
       </table>
+
+      <div v-if="ip" class="ipaddress" @click="copyIP" title="点击复制">{{ ip }}</div>
     </div>
 
     <div class="drawer" v-if="drawer">

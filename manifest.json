@@ -14,7 +14,7 @@
     "default_title": "开发环境cookie跨域自动同步，解决开发环境cookie携带问题",
     "default_popup": "src/index.html"
   },
-  "permissions": ["tabs", "storage", "cookies"],
+  "permissions": ["tabs", "storage", "cookies", "https://myip.ipip.net"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "src/background.js",
