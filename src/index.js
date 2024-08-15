@@ -229,6 +229,8 @@ const app = PetiteVue.createApp({
   },
 
   remove(index) {
+    const res = confirm('确认删除？')
+    if (!res) return;
     const item = this.dataSource.splice(index, 1);
     updateStorage(this.dataSource);
     removeCookie(item);
