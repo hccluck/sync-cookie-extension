@@ -1,6 +1,6 @@
 .DS_Store
 node_modules/
-src/libs/
+src/libs/petite-vue-csp.iife.js
 
 
 # local env files

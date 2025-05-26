@@ -1,93 +1,6 @@
 import { cloneDeep, isEmpty } from './libs/utils.js';
 import { updateStorage, getStorage, updateCookie, removeCookie, getAllCookie, LIST_KEY } from './libs/storage.js';
-
-class Toast {
-  static count = 0;
-
-  static open(message, theme = 'info', duration = 3000, animation = 200) {
-    const toastEl = document.createElement('div');
-
-    toastEl.className = `toast-wrap toast-${theme}`;
-    toastEl.style.top = `${50 * (this.count + 1)}px`;
-    toastEl.style['transition-duration'] = `${animation}ms`;
-    
-    this.count += 1;
-    toastEl.textContent = message;
-
-    document.body.appendChild(toastEl);
-
-    toastEl.getBoundingClientRect(); // 触发重新布局
-    // 设置入场动画状态
-    toastEl.classList.toggle('enter');
-
-    return new Promise(resolve => {
-      setTimeout(() => {
-        toastEl.addEventListener('transitionend', () => {
-          // alert('动画结束后')
-          toastEl.parentNode.removeChild(toastEl);
-
-          this.count -= 1;
-
-          const list = document.querySelectorAll('.toast-wrap')
-          list.forEach((toast, index) => {
-            // 重新设置位置
-            toast.style.top = `${50 * (index + 1)}px`;
-          })
-
-          resolve()
-        })
-
-        // 设置出场动画状态
-        toastEl.classList.toggle('enter')
-      }, duration)
-    })
-  }
-
-  /**
-   * 成功提示
-   * @param {string|object} config 提示内容或者Toast.config
-   * @returns {Promise} Promise
-   */
-  static success(config) {
-    if (config == null) return;
-
-    if (typeof config === 'string') return this.open(config, 'success');
-
-    if (Object.prototype.toString.call(config) === '[object Object]') {
-      return this.open(config.content, 'success', config.duration, config.animation);
-    }
-  }
-
-  static warning(config) {
-    if (config == null) return;
-
-    if (typeof config === 'string') return this.open(config, 'warning');
-
-    if (Object.prototype.toString.call(config) === '[object Object]') {
-      return this.open(config.content, 'warning', config.duration, config.animation);
-    }
-  }
-
-  static error(config) {
-    if (config == null) return;
-
-    if (typeof config === 'string') return this.open(config, 'error');
-
-    if (Object.prototype.toString.call(config) === '[object Object]') {
-      return this.open(config.content, 'error', config.duration, config.animation);
-    }
-  }
-
-  static info(config) {
-    if (config == null) return;
-
-    if (typeof config === 'string') return this.open(config, 'info');
-
-    if (Object.prototype.toString.call(config) === '[object Object]') {
-      return this.open(config.content, 'info', config.duration, config.animation);
-    }
-  }
-}
+import { Toast } from './libs/toast.js';
 
 let back = false;
 const app = PetiteVue.createApp({
@@ -115,31 +28,33 @@ const app = PetiteVue.createApp({
     }
 
     fetch('https://myip.ipip.net')
-      .then(res => res.text())
-      .then(text => this.ip = text);
+      .then((res) => res.text())
+      .then((text) => (this.ip = text));
   },
 
   syncCookie() {
     console.log(this.dataSource);
-    const list = []
+    const list = [];
     this.dataSource.forEach((item) => {
       if (item.open) {
         list.push({
           from: item.from,
           to: item.to,
           cookieName: item.cookieName,
-        })
+        });
       }
     });
 
     if (list.length) {
-      Promise.all(list.map(i => updateCookie(i))).then(() => {
-        Toast.success('Cookie同步成功！');
-      }).catch(() => {
-        Toast.error('Cookie同步异常！');
-      })
+      Promise.all(list.map((i) => updateCookie(i)))
+        .then(() => {
+          Toast.success('Cookie同步成功！');
+        })
+        .catch(() => {
+          Toast.error('Cookie同步异常！');
+        });
     } else {
-      this.clearCookie()
+      this.clearCookie();
     }
   },
 
@@ -229,7 +144,7 @@ const app = PetiteVue.createApp({
   },
 
   remove(index) {
-    const res = confirm('确认删除？')
+    const res = confirm('确认删除？');
     if (!res) return;
     const item = this.dataSource.splice(index, 1);
     updateStorage(this.dataSource);
@@ -303,7 +218,7 @@ const app = PetiteVue.createApp({
   copyIP() {
     const ip = /((\d{1,3}.){3}\d{1,3})/.exec(this.ip)[1];
     navigator.clipboard.writeText(ip);
-    Toast.success('复制成功')
+    Toast.success('复制成功');
   },
 });
 
