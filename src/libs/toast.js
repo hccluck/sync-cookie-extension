@@ -8,6 +8,8 @@ export const Toast = (function () {
   };
 
   function init(message, options) {
+    if (!message) return;
+
     options = options || {};
     var theme = options.theme || opts.theme;
     var duration = options.duration || opts.duration;
@@ -48,8 +50,6 @@ export const Toast = (function () {
 
   function createMethod(defaultTheme) {
     return function (message, config) {
-      if (!message) return;
-
       if (Object.prototype.toString.call(config) === '[object Object]') {
         config.theme = config.theme || defaultTheme;
         return init(message, config);
@@ -62,7 +62,7 @@ export const Toast = (function () {
   function insertStyle(css) {
     var style = document.createElement('style');
     style.type = 'text/css';
-    style.innerHTML =
+    style.textContent =
       '.toast-wrap{position:fixed;top:50px;left:50%;transform:translate(-50%,-20px);padding:8px 12px;border-radius:4px;color:#909399;border:1px solid #ebeef5;background-color:#edf2fc;box-shadow:0 2px 12px 0 rgba(0,0,0,0.25);opacity:0.3;transition-delay:10ms;transition-property:all;transition-timing-function:ease-out;transition-duration:200ms;}.toast-wrap.enter{opacity:1;transform:translate(-50%,0);}.toast-wrap.toast-success{color:#67c23a;background-color:#f0f9eb;border-color:#e1f3d8;}.toast-wrap.toast-warning{color:#e6a23c;background-color:#fdf6ec;border-color:#faecd8;}.toast-wrap.toast-error{color:#f56c6c;background-color:#fef0f0;border-color:#fde2e2;}';
     document.head.appendChild(style);
   }
