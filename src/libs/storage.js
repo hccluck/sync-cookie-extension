@@ -7,11 +7,11 @@ function addProtocol(uri) {
 function removeProtocol(uri) {
   return uri.startsWith('http') ? uri.replace('http://', '').replace('https://', '') : uri;
 }
-export async function updateStorage(list) {
+export async function updateList(list) {
   await chrome.storage.local.set({ [LIST_KEY]: list });
 }
 
-export async function getStorage(key = LIST_KEY) {
+export async function getList(key = LIST_KEY) {
   return await chrome.storage.local.get(key);
 }
 

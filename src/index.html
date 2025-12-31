@@ -17,6 +17,9 @@
           <button @click="searchByDomain()">按域名新增</button>
           <button @click="syncCookie()">同步COOKIE</button>
           <button @click="clearCookie()">清空COOKIE</button>
+          <button @click="setIsAuto(!isAuto)" :class="isAuto ? '' : 'not-checked'">
+            {{ isAuto ? '自动同步' : '开启自动同步' }}
+          </button>
         </div>
         <div>
           <input ref="upload" type="file" accept=".json" @change="uploadHandler" class="hide" hidden />

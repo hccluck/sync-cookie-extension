@@ -14,7 +14,18 @@
     "default_title": "开发环境cookie跨域自动同步，解决开发环境cookie携带问题",
     "default_popup": "src/index.html"
   },
-  "permissions": ["tabs", "storage", "cookies"],
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "windows": "Alt+C",
+        "mac": "Alt+C",
+        "chromeos": "Alt+C",
+        "linux": "Alt+C"
+      },
+      "description": "Toggle feature"
+    }
+  },
+  "permissions": ["tabs", "activeTab", "storage", "cookies", "commands"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "src/background.js",

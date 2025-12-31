@@ -13,6 +13,7 @@
   "author": "hccluck",
   "license": "ISC",
   "devDependencies": {
+    "chrome-types": "^0.1.403",
     "prettier": "^2.8.4"
   }
 }

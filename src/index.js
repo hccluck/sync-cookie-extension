@@ -1,5 +1,5 @@
 import { cloneDeep, isEmpty } from './libs/utils.js';
-import { updateStorage, getStorage, updateCookie, removeCookie, getAllCookie, LIST_KEY } from './libs/storage.js';
+import { updateList, getList, updateCookie, removeCookie, getAllCookie, LIST_KEY } from './libs/storage.js';
 import { Toast } from './libs/toast.js';
 
 let back = false;
@@ -12,19 +12,23 @@ const app = PetiteVue.createApp({
   cookieList: [],
 
   ip: '',
+  isAuto: false,
 
   async mounted() {
-    const storage = await getStorage();
+    const storage = await getList();
     const domainList = !isEmpty(storage) ? Object.values(storage[LIST_KEY]) : [];
     console.log(domainList);
+
+    const { isAuto } = await chrome.storage.local.get('isAuto');
+    this.setIsAuto(isAuto == undefined ? true : isAuto);
 
     if (!isEmpty(domainList)) {
       this.dataSource = domainList;
     }
 
     if (!isEmpty(this.dataSource)) {
-      updateStorage(this.dataSource);
-      this.syncCookie();
+      updateList(this.dataSource);
+      // this.syncCookie();
     }
 
     fetch('https://myip.ipip.net')
@@ -32,8 +36,13 @@ const app = PetiteVue.createApp({
       .then((text) => (this.ip = text));
   },
 
+  setIsAuto(val) {
+    console.log('set isAuto ::::::::::: ', val);
+    this.isAuto = val;
+    chrome.storage.local.set({ isAuto: val });
+  },
+
   syncCookie() {
-    console.log(this.dataSource);
     const list = [];
     this.dataSource.forEach((item) => {
       if (item.open) {
@@ -104,7 +113,7 @@ const app = PetiteVue.createApp({
     }
 
     this.dataSource.push(item);
-    updateStorage(this.dataSource);
+    updateList(this.dataSource);
     this.syncCookie();
     this.close();
   },
@@ -147,15 +156,30 @@ const app = PetiteVue.createApp({
     const res = confirm('确认删除？');
     if (!res) return;
     const item = this.dataSource.splice(index, 1);
-    updateStorage(this.dataSource);
+    updateList(this.dataSource);
     removeCookie(item);
   },
 
   changeStatus(index) {
     this.dataSource[index].open = !this.dataSource[index].open;
-    updateStorage(this.dataSource);
+    updateList(this.dataSource);
 
     this.syncCookie();
+
+    if (!this.dataSource[index].open) {
+      removeCookie(this.dataSource[index]);
+    }
+
+    // 刷新目标页面
+    chrome.tabs.query({ currentWindow: true }).then((tabs) => {
+      tabs.forEach((tab) => {
+        const tabUrl = tab.url.replace(/^http(s)?:\/\//, '');
+        if (tabUrl.startsWith(this.dataSource[index].to)) {
+          console.log('reload tab:::::::::::', tab.id, tab.url);
+          chrome.tabs.reload(tab.id);
+        }
+      });
+    });
   },
 
   upload() {
@@ -192,7 +216,7 @@ const app = PetiteVue.createApp({
       if (!list.length) return Toast.warning('无可用数据导入');
 
       this.dataSource.push(...list);
-      updateStorage(this.dataSource);
+      updateList(this.dataSource);
       this.syncCookie();
     };
   },

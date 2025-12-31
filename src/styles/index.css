@@ -85,6 +85,11 @@ button {
   font-size: 14px;
   border-radius: 4px;
 }
+button.not-checked {
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
 input[type='text'] {
   background-color: #fff;
   background-image: none;

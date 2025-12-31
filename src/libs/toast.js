@@ -32,7 +32,7 @@ export const Toast = (function () {
 
     setTimeout(function () {
       toastEl.addEventListener('transitionend', function () {
-        toastEl.parentNode.removeChild(toastEl);
+        toastEl.parentNode?.removeChild?.(toastEl);
 
         count -= 1;
 
